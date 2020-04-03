@@ -4,6 +4,7 @@ import (
 	"crypto"
 	"crypto/rand"
 	"crypto/rsa"
+	"crypto/sha256"
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
@@ -166,4 +167,66 @@ func RsaDecryptPrivate(privateKey []byte, ciphertext []byte) ([]byte, error) {
 		return nil, err
 	}
 	return rsa.DecryptPKCS1v15(rand.Reader, priv, ciphertext)
+}
+
+// 使用sha256进行签名
+func RsaSignWithSha256(data []byte, keyBytes []byte) ([]byte, error) {
+	h := sha256.New()
+	h.Write(data)
+	hashed := h.Sum(nil)
+	block, _ := pem.Decode(keyBytes)
+	if block == nil {
+		err := errors.New("private key error")
+		return nil, err
+	}
+	privateKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	if err != nil {
+		return nil, err
+	}
+	return rsa.SignPKCS1v15(rand.Reader, privateKey, crypto.SHA256, hashed)
+}
+
+// 使用sha256签名验证
+func RsaVerySignWithSha256(data, signData, keyBytes []byte) (bool, error) {
+	block, _ := pem.Decode(keyBytes)
+	if block == nil {
+		err := errors.New("public key error")
+		return false, err
+	}
+	pubKey, err := x509.ParsePKIXPublicKey(block.Bytes)
+	if err != nil {
+		return false, err
+	}
+
+	hashed := sha256.Sum256(data)
+	err = rsa.VerifyPKCS1v15(pubKey.(*rsa.PublicKey), crypto.SHA256, hashed[:], signData)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+// RSA公钥私钥产生
+func GenRsaKey() (prvkey, pubkey []byte) {
+	privateKey, err := rsa.GenerateKey(rand.Reader, 1024)
+	if err != nil {
+		panic(err)
+	}
+	derStream := x509.MarshalPKCS1PrivateKey(privateKey)
+	block := &pem.Block{
+		Type:  "RSA PRIVATE KEY",
+		Bytes: derStream,
+	}
+	prvkey = pem.EncodeToMemory(block)
+	publicKey := &privateKey.PublicKey
+	derPkix, err := x509.MarshalPKIXPublicKey(publicKey)
+	if err != nil {
+		panic(err)
+	}
+	block = &pem.Block{
+		Type:  "PUBLIC KEY",
+		Bytes: derPkix,
+	}
+	pubkey = pem.EncodeToMemory(block)
+	return
 }

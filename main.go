@@ -2,6 +2,7 @@ package main
 
 import (
 	"EasySSL/crypto"
+	"encoding/hex"
 	"fmt"
 )
 
@@ -45,9 +46,19 @@ cFQVB/nQfmaMa4ChK0QEUe+Mqi++MwgYbRHx1lIOXEfUJO+PXrMekw==
 -----END 私钥-----
 `
 
-func main() {
-	str := "this is test"
+func TestSha256Sign() {
+	var data = "卧了个槽，这么神奇的吗？？！！！  ԅ(¯﹃¯ԅ) ！！！！！！）"
+	fmt.Println("对消息进行签名操作...")
+	signData, _ := crypto.RsaSignWithSha256([]byte(data), []byte(Pirvatekey))
+	fmt.Println("消息的签名信息： ", hex.EncodeToString(signData))
+	fmt.Println("\n对签名信息进行验证...")
+	if rt, _ := crypto.RsaVerySignWithSha256([]byte(data), signData, []byte(Pubkey)); rt == true {
+		fmt.Println("签名信息验证成功，确定是正确私钥签名！！")
+	}
+}
 
+func TestRsaCrypt() {
+	str := "卧了个槽，这么神奇的吗？？！！！  ԅ(¯﹃¯ԅ) ！！！！！！）"
 	ciphertext, err := crypto.RsaEncryptPrivate([]byte(Pirvatekey), []byte(str))
 	if err == nil {
 		text, err := crypto.RsaDecryptPublic([]byte(Pubkey), ciphertext)
@@ -65,4 +76,14 @@ func main() {
 			fmt.Println("公钥加密,私钥解密--成功")
 		}
 	}
+}
+
+func TestGenRsa() {
+	priKey, pubKey := crypto.GenRsaKey()
+	fmt.Println(string(priKey))
+	fmt.Println(string(pubKey))
+}
+
+func main() {
+	TestGenRsa()
 }
