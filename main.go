@@ -2,6 +2,8 @@ package main
 
 import (
 	"EasySSL/crypto"
+	"crypto/rand"
+	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
 )
@@ -84,6 +86,50 @@ func TestGenRsa() {
 	fmt.Println(string(pubKey))
 }
 
+// GenerateID generates the unique identifier
+func GenerateID() string {
+	r := make([]byte, 32)
+	_, _ = rand.Read(r)
+
+	hash := sha256.New()
+
+	return hex.EncodeToString(hash.Sum(r))
+}
+
+func AesTest() {
+	key := "1234567890123456"
+	str := "这就是个测试,sdjflsjl司搭街坊拉萨酱豆腐了就螺丝钉解放拉萨就浪费及时了解对方了教室里的房间里撒旦解放了解萨拉江东父老就是的jieshu"
+
+	//encryptData := crypto.AESEcbEncrypt([]byte(str), []byte(key))
+	//fmt.Println(encryptData)
+	//decryptData := crypto.AESEcbDecrypt(encryptData, []byte(key))
+	//fmt.Println(string(decryptData))
+
+	//encryptData := crypto.AESCfbEncrypt([]byte(str), []byte(key), []byte(key))
+	//fmt.Println(encryptData)
+	//decryptData := crypto.AESCfbDecrypt(encryptData, []byte(key), []byte(key))
+	//fmt.Println(string(decryptData))
+
+	//encryptData := crypto.AESCbcEncrypt([]byte(str), []byte(key), []byte(key))
+	//fmt.Println(encryptData)
+	//decryptData := crypto.AESCbcDecrypt(encryptData, []byte(key), []byte(key))
+	//fmt.Println(string(decryptData))
+
+	//encryptData := crypto.AESCtrEncrypt([]byte(str), []byte(key), []byte(key))
+	//fmt.Println(encryptData)
+	//decryptData := crypto.AESCtrDecrypt(encryptData, []byte(key), []byte(key))
+	//fmt.Println(string(decryptData))
+
+	encryptData := crypto.AESOfbEncrypt([]byte(str), []byte(key), []byte(key))
+	fmt.Println(encryptData)
+	decryptData := crypto.AESOfbDecrypt(encryptData, []byte(key), []byte(key))
+	fmt.Println(string(decryptData))
+}
+
 func main() {
-	TestGenRsa()
+	//TestGenRsa()
+	//randString := GenerateID()
+	//fmt.Println(randString)
+
+	AesTest()
 }
