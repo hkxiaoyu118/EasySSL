@@ -2,6 +2,7 @@ package main
 
 import (
 	"EasySSL/crypto"
+	"EasySSL/httpssl"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
@@ -127,9 +128,5 @@ func AesTest() {
 }
 
 func main() {
-	//TestGenRsa()
-	//randString := GenerateID()
-	//fmt.Println(randString)
-
-	AesTest()
+	httpssl.HttpsslTest()
 }
