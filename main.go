@@ -2,7 +2,6 @@ package main
 
 import (
 	"EasySSL/crypto"
-	"EasySSL/httpssl"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
@@ -128,5 +127,6 @@ func AesTest() {
 }
 
 func main() {
-	httpssl.HttpsslTest()
+	//httpssl.HttpsslTest()
+	//crypto.HashTest()
 }

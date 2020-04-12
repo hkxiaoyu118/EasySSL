@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"crypto/sha512"
 	"encoding/hex"
+	"fmt"
 	"hash/crc32"
 )
 
@@ -35,4 +36,13 @@ func SHA512(data []byte) string {
 
 func CRC32(data []byte) uint32 {
 	return crc32.ChecksumIEEE(data)
+}
+
+func HashTest() {
+	str := "住宿的房间绿色科技sdfasdf"
+	fmt.Println(MD5([]byte(str)))
+	fmt.Println(SHA1([]byte(str)))
+	fmt.Println(SHA256([]byte(str)))
+	fmt.Println(SHA512([]byte(str)))
+	fmt.Println(CRC32([]byte(str)))
 }
